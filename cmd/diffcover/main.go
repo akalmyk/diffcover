@@ -152,14 +152,20 @@ func filterCoverage(blocks []CoverBlock, changed map[string]map[int]bool) []Cove
 }
 
 func main() {
-	if len(os.Args) != 4 {
-		fmt.Println("Usage: diffcover diff.path coverage.out diff_coverage.out")
+	if len(os.Args) != 5 {
+		fmt.Println("Usage: diffcover diff.path coverage.out diff_coverage.out 80")
 		os.Exit(1)
 	}
 
 	diffPath := os.Args[1]
 	coveragePath := os.Args[2]
 	outputPath := os.Args[3]
+	thresholdArg := os.Args[4]
+	threshold, err := strconv.ParseFloat(thresholdArg, 64)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error parsing threshold: %v\n", err)
+		os.Exit(1)
+	}
 
 	blocks, err := parseCoverage(coveragePath)
 	if err != nil {
@@ -202,7 +208,6 @@ func main() {
 		_, _ = out.WriteString(b.Raw + "\n")
 	}
 
-	const threshold = 80.0
 	if coveragePercent < threshold && totalStmts > 0 {
 		fmt.Fprintf(os.Stderr, "diff coverage %.2f%% is below threshold %.2f%%\n", coveragePercent, threshold)
 		os.Exit(1)
