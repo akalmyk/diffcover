@@ -203,7 +203,7 @@ func main() {
 	}
 
 	const threshold = 80.0
-	if coveragePercent < threshold {
+	if coveragePercent < threshold && totalStmts > 0 {
 		fmt.Fprintf(os.Stderr, "diff coverage %.2f%% is below threshold %.2f%%\n", coveragePercent, threshold)
 		os.Exit(1)
 	}
