@@ -209,6 +209,15 @@ func main() {
 	}
 
 	if coveragePercent < threshold && totalStmts > 0 {
+		failed, err := os.Create("diffcover.failed")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error creating diffcover.failed: %v\n", err)
+			os.Exit(1)
+		}
+		defer failed.Close()
+
+		_, _ = failed.WriteString("f")
+
 		fmt.Fprintf(os.Stderr, "diff coverage %.2f%% is below threshold %.2f%%\n", coveragePercent, threshold)
 		os.Exit(1)
 	}
